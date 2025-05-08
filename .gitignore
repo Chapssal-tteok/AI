@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.log
+
+# 가상환경
+venv/
+.env
+*.env
+
+# VS Code
+.vscode/
+.history/
+
+# JetBrains (PyCharm, IntelliJ)
+.idea/
+
+# OS별
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebook 체크포인트
+.ipynb_checkpoints/
+
+# ChromaDB 파일
+db/  # if your Chroma DB is not meant to be version-controlled
+
+# 기타 캐시/임시
+.cache/
+*.bak

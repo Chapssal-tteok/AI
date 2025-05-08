@@ -1,0 +1,9 @@
+fastapi==0.110.0
+uvicorn==0.29.0
+openai==1.14.3
+requests==2.31.0
+python-dotenv==1.0.1
+sentence-transformers==2.2.2
+langchain==0.1.14
+chromadb==0.4.24
+onnxruntime==1.21.1
