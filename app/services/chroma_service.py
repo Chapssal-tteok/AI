@@ -1,3 +1,5 @@
+# app/services/chroma_service.py
+
 from app.core.vector_utils import get_chroma_db
 
 def search_similar_questions(query: str):

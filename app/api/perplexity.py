@@ -1,3 +1,5 @@
+# app/api/perplexity.py
+
 from fastapi import APIRouter
 from app.services.perplexity_service import query_perplexity
 from app.models.search_model import PerplexityRequest, PerplexityResponse

@@ -1,3 +1,5 @@
+# app/api/gpt.py
+
 from fastapi import APIRouter
 from app.services.gpt_service import prompt_gpt
 from app.models.search_model import GPTRequest, GPTResponse

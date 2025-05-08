@@ -1,3 +1,5 @@
+# app/core/vector_utils.py
+
 from sentence_transformers import SentenceTransformer
 from langchain_community.vectorstores import Chroma
 from app.core.config import settings
