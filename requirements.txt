@@ -6,4 +6,4 @@ python-dotenv==1.0.1
 sentence-transformers==2.2.2
 langchain==0.1.14
 chromadb==0.4.24
-onnxruntime==1.21.1
+onnxruntime==1.19.2
