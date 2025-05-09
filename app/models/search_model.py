@@ -3,12 +3,6 @@
 from pydantic import BaseModel
 from typing import List, Dict
 
-class GPTRequest(BaseModel):
-    prompt: str
-
-class GPTResponse(BaseModel):
-    answer: str
-
 class PerplexityRequest(BaseModel):
     query: str
 

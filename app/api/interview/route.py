@@ -3,6 +3,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 from app.services.gpt_service import get_chat_response
+from app.services.perplexity_service import search_perplexity_summary
 from app.prompts.resume_analyze_prompts import generate_resume_analysis_prompt
 from app.prompts.analyze_answer_prompts import analyze_answer_prompt
 from app.prompts.follow_up_prompts import generate_follow_up_prompt
@@ -67,7 +68,17 @@ async def generate_follow_up(req: FollowUpRequest):
 
 @router.post("/generate-qas")
 async def generate_interview_questions(req: InterviewQasRequest):
-    prompt = generate_interview_qas_prompt(req.company, req.position, req.resumeContent)
+    # 1. 기업 + 직무로 Perplexity 요약 검색
+    search_query = f"{req.company} {req.position}"
+    pplx_summary = search_perplexity_summary(search_query)
+
+    # 2. 요약 결과와 자기소개서 내용을 합쳐 프롬프트 생성
+    prompt = generate_interview_qas_prompt(pplx_summary, req.resumeContent)
+
+    print("📨 최종 prompt:\n", prompt)
+    print("📏 길이:", len(prompt))
+    
+    # 3. GPT로 질문 생성
     response = get_chat_response(prompt, model="sonar", mode="text")
 
     if not response or not isinstance(response, str):

@@ -3,13 +3,14 @@
 import os
 import requests
 from dotenv import load_dotenv
+from typing import Optional
 
 # .env 로드
 load_dotenv()
 
 PPLX_API_KEY = os.getenv("PPLX_API_KEY")
 
-def get_chat_response(prompt: str, model: str = "sonar", mode: str = "text") -> str | None:
+def get_chat_response(prompt: str, model: str = "sonar", mode: str = "text") -> Optional[str]:
     url = "https://api.perplexity.ai/chat/completions"
     headers = {
         "Content-Type": "application/json",
