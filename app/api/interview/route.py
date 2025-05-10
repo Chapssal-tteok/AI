@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Body
 from pydantic import BaseModel
 from typing import List, Dict
+from app.services.chroma_service import search_similar_questions
 from app.services.gpt_service import get_chat_response
 from app.services.perplexity_service import search_perplexity_summary
 from app.prompts.resume_analyze_prompts import generate_resume_analysis_prompt
@@ -30,7 +31,6 @@ class InterviewQasRequest(BaseModel):
     company: str
     position: str
     resumeContent: str
-
 
 @router.post(
     "/analyze-resume",
@@ -67,7 +67,6 @@ async def analyze_resume(req: ResumeRequest = Body(..., example={
 
     feedback = [line for line in response.split("\n") if line.strip()]
     return {"feedback": feedback}
-
 
 @router.post(
     "/analyze-answer",
@@ -131,7 +130,6 @@ async def generate_follow_up(req: FollowUpRequest = Body(..., example={
     follow_ups = [line for line in response.split("\n") if line.strip()]
     return {"followUps": follow_ups}
 
-
 @router.post(
     "/generate-qas",
     summary="면접 질문 생성",
@@ -162,13 +160,19 @@ async def generate_interview_questions(req: InterviewQasRequest = Body(..., exam
     search_query = f"{req.company} {req.position}"
     pplx_summary = search_perplexity_summary(search_query)
 
-    # 2. 요약 결과와 자기소개서 내용을 합쳐 프롬프트 생성
-    prompt = generate_interview_qas_prompt(pplx_summary, req.resumeContent)
+    # 2. Chroma에서 기업, 직무 관련 질문 가져오기
+    company_questions = search_similar_questions(req.company)
+    position_questions = search_similar_questions(req.position)
 
-    print("📨 최종 prompt:\n", prompt)
-    print("📏 길이:", len(prompt))
+    company_q_text = "\n".join([q["content"] for q in company_questions])
+    position_q_text = "\n".join([q["content"] for q in position_questions])
+
+    chroma_examples = f"[기업: {req.company}] 관련 질문들:\n{company_q_text}\n\n[직무: {req.position}] 관련 질문들:\n{position_q_text}"
+
+    # 3. 요약 결과와 자기소개서 내용을 합쳐 프롬프트 생성
+    prompt = generate_interview_qas_prompt(pplx_summary, req.resumeContent, chroma_examples)
     
-    # 3. GPT로 질문 생성
+    # 4. GPT로 질문 생성
     response = get_chat_response(prompt, model="sonar", mode="text")
 
     if not response or not isinstance(response, str):

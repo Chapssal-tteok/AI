@@ -1,15 +1,18 @@
 # app/prompts/interview_qas_prompts.py
 
-def generate_interview_qas_prompt(pplx_content: str, resume_content: str) -> str:
+def generate_interview_qas_prompt(pplx_content: str, resume_content: str, chroma_examples: str) -> str:
     return f"""
 Perplexity 검색 내용: {pplx_content}
 자기소개서 내용: {resume_content}
+
+ChromaDB에서 추출한 기업 및 직무 관련 질문 예시:
+{chroma_examples}
 
 지원하고자 하는 기업 및 직무에 대한 깊이 있는 면접 질문을 생성하기 위해, 아래 지침과 구조를 따라 질문을 생성해주세요.
 
 # Steps
 
-1. 기업 및 직무 이해: Perplexity에서 가져온 기업 및 직무에 대한 정보를 분석합니다. 
+1. 기업 및 직무 이해: Perplexity와 Chroma에서 가져온 기업 및 직무에 대한 정보를 분석합니다.
 2. 자기소개서 분석: 자기소개서의 주요 내용, 특히 개인의 강점, 경험, 성과를 식별합니다.
 3. 경험 연결: 지원자의 경험과 역량을 평가할 수 있는 질문을 생성합니다.
 4. 교차분석: 자기소개서에서 언급된 강점 및 경험이 기업과 직무에 어떻게 부합하는지 평가합니다.
