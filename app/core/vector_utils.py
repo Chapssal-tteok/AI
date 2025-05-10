@@ -12,7 +12,7 @@ class LangChainSentenceTransformer:
         return self.model.encode(texts, show_progress_bar=False).tolist()
 
     def embed_query(self, text):
-        return self.model.encode([text])[0]
+        return self.model.encode([text])[0].tolist()
 
 def get_chroma_db():
     embedding_function = LangChainSentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
