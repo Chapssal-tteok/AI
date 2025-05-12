@@ -14,6 +14,7 @@ from app.prompts.interview_qas_prompts import generate_interview_qas_prompt
 router = APIRouter()
 
 class ResumeRequest(BaseModel):
+    question: str
     resume: str
     company: str
     position: str
@@ -35,7 +36,7 @@ class InterviewQasRequest(BaseModel):
 @router.post(
     "/analyze-resume",
     summary="자기소개서 분석",
-    description="자기소개서와 지원 정보(기업, 직무)를 바탕으로 피드백을 제공합니다.",
+    description="하나의 자기소개서 문항과 답변, 그리고 지원 정보(기업, 직무)를 바탕으로 피드백을 제공합니다.",
     response_model=Dict[str, List[str]],
     responses={
         200: {
@@ -44,9 +45,11 @@ class InterviewQasRequest(BaseModel):
                 "application/json": {
                     "example": {
                         "feedback": [
-                            "**논리적 흐름**: 자기소개서의 전체 흐름이 부드럽고 자연스러워요.",
-                            "**구체성**: 경험이 구체적으로 잘 드러나 있어 설득력이 높아요.",
-                            "**개선 포인트**: 두 번째 문단의 예시는 다소 모호하니 구체적인 수치나 결과를 추가해보세요."
+                            "**질문 충실도**: 질문의 핵심 의도에 맞춰 구체적인 동기를 잘 설명해주셨어요.",
+                            "**논리적인 흐름**: 서론-본론-결론 구조가 깔끔하게 드러나서 이해하기 좋았어요.",
+                            "**구체성**: 특정 프로젝트와 수치가 포함되어 있어서 설득력이 높아요.",
+                            "**기업과 직무 연관성**: 카카오가 강조하는 사용자 중심 가치와 경험이 잘 연결되었어요.",
+                            "**종합 피드백**: 전반적으로 완성도 높은 답변입니다. 마무리에서 입사 후 포부를 좀 더 분명히 드러내면 좋을 것 같아요."
                         ]
                     }
                 }
@@ -55,17 +58,31 @@ class InterviewQasRequest(BaseModel):
     }
 )
 async def analyze_resume(req: ResumeRequest = Body(..., example={
-    "resume": "저는 대학 생활 동안 다양한 팀 프로젝트를 수행하며 협업 능력을 키웠습니다...",
-    "company": "네이버",
+    "question": "지원 동기와 입사 후 포부를 작성해주세요.",
+    "resume": "저는 카카오의 사용자 중심 철학에 깊이 공감하여 지원하게 되었습니다...",
+    "company": "카카오",
     "position": "백엔드 개발자"
 })):
-    prompt = generate_resume_analysis_prompt(req.resume, req.company, req.position)
+    # 1. 기업 정보 요약 검색
+    company_summary = search_perplexity_summary(req.company)
+
+    # 2. 프롬프트 생성
+    prompt = generate_resume_analysis_prompt(
+        question=req.question,
+        resume=req.resume,
+        company=req.company,
+        position=req.position,
+        company_summary=company_summary
+    )
+
+    # 3. GPT 응답
     response = get_chat_response(prompt, model="sonar", mode="text")
 
     if not response or not isinstance(response, str):
         return {"message": "분석 실패"}
 
-    feedback = [line for line in response.split("\n") if line.strip()]
+    # 4. 줄 단위 피드백 파싱
+    feedback = [line.strip() for line in response.split("\n") if line.strip()]
     return {"feedback": feedback}
 
 @router.post(
