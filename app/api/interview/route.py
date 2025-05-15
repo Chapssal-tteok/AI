@@ -76,10 +76,10 @@ async def analyze_resume(req: ResumeRequest = Body(..., example={
     )
 
     # 3. GPT 응답
-    response = get_chat_response(prompt, model="sonar", mode="text")
+    response = get_chat_response(prompt, model="gpt-4o", mode="text")
 
     if not response or not isinstance(response, str):
-        return {"message": "분석 실패"}
+        return {"feedback": ["GPT 분석에 실패했습니다."]}
 
     # 4. 줄 단위 피드백 파싱
     feedback = [line.strip() for line in response.split("\n") if line.strip()]
@@ -109,7 +109,7 @@ async def analyze_answer(req: AnswerAnalysisRequest = Body(..., example={
     "resume": "저는 다양한 협업 프로젝트를 통해 갈등 조정 능력을 키웠습니다..."
 })):
     prompt = analyze_answer_prompt(req.question, req.answer, req.resume)
-    response = get_chat_response(prompt, model="sonar", mode="text")
+    response = get_chat_response(prompt, model="gpt-4o", mode="text")
 
     if not response or not isinstance(response, str):
         return {"message": "답변 분석 실패"}
@@ -139,7 +139,7 @@ async def generate_follow_up(req: FollowUpRequest = Body(..., example={
     "answer": "네, 저는 프로젝트에서..."
 })):
     prompt = generate_follow_up_prompt(req.question, req.answer)
-    response = get_chat_response(prompt, model="sonar", mode="text")
+    response = get_chat_response(prompt, model="gpt-4o", mode="text")
 
     if not response or not isinstance(response, str):
         return {"message": "추가 질문 생성 실패"}
@@ -190,7 +190,7 @@ async def generate_interview_questions(req: InterviewQasRequest = Body(..., exam
     prompt = generate_interview_qas_prompt(pplx_summary, req.resumeContent, chroma_examples)
     
     # 4. GPT로 질문 생성
-    response = get_chat_response(prompt, model="sonar", mode="text")
+    response = get_chat_response(prompt, model="gpt-4o", mode="text")
 
     if not response or not isinstance(response, str):
         return {"message": "질문 생성 실패"}

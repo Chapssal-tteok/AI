@@ -8,13 +8,13 @@ from typing import Optional
 # .env 로드
 load_dotenv()
 
-PPLX_API_KEY = os.getenv("PPLX_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-def get_chat_response(prompt: str, model: str = "sonar", mode: str = "text") -> Optional[str]:
-    url = "https://api.perplexity.ai/chat/completions"
+def get_chat_response(prompt: str, model: str = "gpt-4o", mode: str = "text") -> Optional[str]:
+    url = "https://api.openai.com/v1/chat/completions"
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {PPLX_API_KEY}"
+        "Authorization": f"Bearer {OPENAI_API_KEY}"
     }
 
     messages = [
@@ -40,9 +40,6 @@ def get_chat_response(prompt: str, model: str = "sonar", mode: str = "text") -> 
         "top_p": 0.9,
         "stream": False
     }
-
-    if mode == "json":
-        payload["response_format"] = "json"
 
     try:
         response = requests.post(url, headers=headers, json=payload)
