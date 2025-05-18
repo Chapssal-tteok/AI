@@ -29,4 +29,5 @@ def generate_resume_analysis_prompt(question: str, resume: str, company: str, po
 - 문장은 모두 "~요" 형태로 마무리해주세요.
 - 마지막에 **전체 종합 피드백**을 2~3문장으로 제공해주세요.
 - 출력 시 각 항목 제목은 **볼드체**로 표시해주세요.
+- 각 항목이 끝날 때마다 줄바꿈을 해주세요.
 """
