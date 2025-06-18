@@ -28,7 +28,7 @@
 - **Google TTS/STT** 기술을 활용한 음성 기반 면접 연습 기능 제공
 - **Spring Boot + FastAPI** 구조로 백엔드 서버와 AI 서버 분리 구성
 
-> 💡 **참고:** 본 레포지토리는 GPT-4o 분석 및 Perplexity 기반 질문 생성을 담당하는 **FastAPI 기반 AI 서버**입니다.  
+> 💡 **참고:** 본 레포지토리는 GPT-4o 분석 및 Perplexity 기반 질문 생성을 담당하는 **FastAPI 기반 AI 서버**입니다. (TTS/STT는 백엔드 서버에서 처리)
 > 👉 Spring Boot 기반 백엔드 서버와 연동되어, AI 기능을 외부 API 형태로 제공합니다.
 
 ### 🛠 제공 기능
@@ -116,7 +116,7 @@ AI 서버를 실행하기 위해 아래의 환경 및 자원들이 필요합니�
   - 🔑 Perplexity API Key: https://www.perplexity.ai/
 - 크롤링용 ChromeDriver 설치 (`crolling_question.py` 실행 시 필요)
   - 사용 중인 Chrome 브라우저 버전에 맞는 ChromeDriver 다운로드
-  - 📎 다운로드: [Chrome for Testing (ChromeDriver)](https://googlechromelabs.github.io/chrome-for-testing/)
+  - 📎 다운로드: https://googlechromelabs.github.io/chrome-for-testing/
 
 ## 🚀 시작하기
 
@@ -161,8 +161,7 @@ PPLX_API_KEY=your-perplexity-api-key
 python crolling_question.py
 ```
 
-- 잡코리아 웹사이트에서 기업명, 경력 구분, 직무, 면접 질문 데이터를 크롤링하여
-CSV 파일 `dataset_question.csv`에 저장합니다.
+- 잡코리아 웹사이트에서 기업명, 경력 구분, 직무, 면접 질문 데이터가 크롤링되어 프로젝트 루트에 CSV 파일 `dataset_question.csv`로 저장됩니다.
 
 - 해당 파일이 이미 존재할 경우, 이전에 저장된 데이터를 보존한 채 새로운 질문이 이어서 추가됩니다.
 
