@@ -29,6 +29,7 @@
 - **Spring Boot + FastAPI** 구조로 백엔드 서버와 AI 서버 분리 구성
 
 > 💡 **참고:** 본 레포지토리는 GPT-4o 분석 및 Perplexity 기반 질문 생성을 담당하는 **FastAPI 기반 AI 서버**입니다. (TTS/STT는 백엔드 서버에서 처리)
+
 > 👉 Spring Boot 기반 백엔드 서버와 연동되어, AI 기능을 외부 API 형태로 제공합니다.
 
 ### 🛠 제공 기능
