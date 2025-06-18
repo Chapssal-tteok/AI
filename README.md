@@ -87,20 +87,21 @@ AI/
 ├── db/                              # ChromaDB 데이터 저장 폴더
 │
 ├── .env                             # 환경 변수 파일 (.env)
+├── crolling_question.py             # 면접 질문 크롤링 코드
 ├── dataset_question.csv             # 크롤링을 통해 얻은 기업, 직무 별 면접 질문 데이터
 ├── main.py                          # FastAPI 앱 진입점
-├── README.md                        # 프로젝트 설명서
-└── requirements.txt                 # Python 의존성 명세
+├── requirements.txt                 # Python 의존성 명세
+└── README.md
 ```
 
 ## 🚀 주요 API 기능
 
 | 엔드포인트 | 설명 |
 |------------|------|
-| `POST /analyze-resume` | 자기소개서 문항 및 답변에 대해 GPT 기반 피드백 제공 |
-| `POST /analyze-answer` | 면접 답변 분석: 강점, 개선점, 총점 등 피드백 반환 |
-| `POST /follow-up` | 후속 질문 생성: 사용자의 답변을 기반으로 심화 질문 제공 |
-| `POST /generate-qas` | RAG 기반 예상 면접 질문 생성 (Chroma + Perplexity + GPT 활용) |
+| `POST /analyze-resume` | 자기소개서 문항과 답변을 기반으로 GPT가 피드백을 생성합니다. |
+| `POST /analyze-answer` | 면접 답변에 대해 강점과 개선점을 분석합니다. |
+| `POST /follow-up` | 면접 답변을 기반으로 추가 질문을 생성합니다. |
+| `POST /generate-qas` | 자기소개서, 기업 및 직무 정보를 기반으로 예상 면접 질문을 생성합니다. |
 
 > **예시 요청 및 응답은 각 API 내부에 Swagger-style Docstring으로 포함되어 있습니다.**
 
@@ -110,10 +111,12 @@ AI 서버를 실행하기 위해 아래의 환경 및 자원들이 필요합니�
 
 - Python 3.10 이상
 - `pip` 또는 `virtualenv` 사용 가능 환경
-- 아래 API 키 발급 및 .env 파일 생성 필요:
+- 아래 서비스의 API 키 발급
   - 🔑 OpenAI API Key: https://platform.openai.com/account/api-keys
   - 🔑 Perplexity API Key: https://www.perplexity.ai/
 - 크롤링용 ChromeDriver 설치 (`crolling_question.py` 실행 시 필요)
+  - 사용 중인 Chrome 브라우저 버전에 맞는 ChromeDriver 다운로드
+  - 📎 다운로드: [Chrome for Testing (ChromeDriver)](https://googlechromelabs.github.io/chrome-for-testing/)
 
 ## 🚀 시작하기
 
@@ -152,11 +155,18 @@ PPLX_API_KEY=your-perplexity-api-key
 
 ### 4️⃣ 면접 질문 데이터 크롤링 (선택)
 
+> 💡 이미 dataset_question.csv가 준비되어 있다면 이 단계는 생략 가능합니다.
+
 ```bash
 python crolling_question.py
 ```
 
-> 💡 이미 dataset_question.csv가 준비되어 있다면 이 단계는 생략 가능합니다.
+- 잡코리아 웹사이트에서 기업명, 경력 구분, 직무, 면접 질문 데이터를 크롤링하여
+CSV 파일 `dataset_question.csv`에 저장합니다.
+
+- 해당 파일이 이미 존재할 경우, 이전에 저장된 데이터를 보존한 채 새로운 질문이 이어서 추가됩니다.
+
+- 크롤링 결과는 이후 ChromaDB 초기화 시 임베딩 데이터로 사용됩니다.
 
 ### 5️⃣ 벡터 DB 초기화
 
@@ -164,7 +174,12 @@ python crolling_question.py
 python app/core/init_chroma.py
 ```
 
-> dataset_question.csv를 기반으로 ChromaDB를 생성합니다.
+- `dataset_question.csv`에 저장된 면접 질문 데이터를 기반으로 ChromaDB 벡터 데이터베이스를 초기화합니다.
+
+- 각 질문은 SentenceTransformer로 임베딩되어 저장되며, 추후 `/generate-qas` API에서 유사 질문 검색에 사용됩니다.
+
+- 초기화 시 기존 ChromaDB 폴더(`db/`)는 삭제되고 새롭게 생성되며,
+초기화가 완료되면 `✅ DB 초기화 완료. 총 문서 수: N` 형태로 완료 메시지가 출력됩니다.
 
 ### 6️⃣ 서버 실행
 
