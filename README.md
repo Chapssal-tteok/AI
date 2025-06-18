@@ -1,4 +1,4 @@
-# PreView Backend Repository
+# PreView AI Repository
 
 > 이 레포지토리는 **AI 기반 자기소개서 분석 및 면접 준비 서비스 PreView**의 AI 서버를 위한 FastAPI 기반 프로젝트입니다.
 
@@ -60,41 +60,37 @@ PreView는 누구나 **혼자서도 실전 면접을 준비할 수 있는 AI 면
 
 ```
 AI/
-├── app/
-│   ├── api/                         # FastAPI 라우터 구성
-│   │   ├── interview/               # 자기소개서 및 면접 관련 API
-│   │   │   └── route.py             # 주요 인터뷰 API 라우트
-│   │   ├── chroma.py                # Chroma 관련 API (벡터 검색)
-│   │   ├── perplexity.py            # Perplexity API 연동
+├── app/                             # 애플리케이션 주요 모듈
+│   ├── api/                         # FastAPI 라우팅 관련 파일
+│   │   ├── interview/               # 면접 관련 API 라우터
+│   │   │   └── route.py
+│   │   ├── chroma.py                # ChromaDB 관련 API 라우터
+│   │   ├── perplexity.py            # Perplexity 관련 API 라우터
 │   │   └── __init__.py
-│   │
-│   ├── core/                        # 초기화 및 설정, 벡터 임베딩 로직
-│   │   ├── config.py                # 설정값 및 환경 변수 관리
-│   │   ├── init_chroma.py           # ChromaDB 초기화 스크립트
-│   │   └── vector_utils.py          # 벡터 검색 유틸리티
-│   │
-│   ├── models/                      # Pydantic 기반 요청/응답 모델 정의
+│   ├── core/                        # 핵심 설정 및 유틸
+│   │   ├── config.py                # 환경 변수 로딩 등 설정 파일
+│   │   ├── init_chroma.py           # ChromaDB 초기화용 스크립트
+│   │   └── vector_utils.py          # 벡터 처리 유틸 함수들
+│   ├── models/                      # 검색 관련 모델 정의
 │   │   └── search_model.py
-│   │
-│   ├── prompts/                     # 프롬프트 템플릿 모음
+│   ├── prompts/                     # 프롬프트 모음
 │   │   ├── analyze_answer_prompts.py
 │   │   ├── follow_up_prompts.py
 │   │   ├── interview_qas_prompts.py
 │   │   └── resume_analyze_prompts.py
-│   │
-│   └── services/                    # 기능별 서비스 모듈
-│       ├── chroma_service.py        # ChromaDB 연동 로직
-│       └── gpt_service.py           # OpenAI GPT 호출 로직
+│   ├── services/                    # 기능별 서비스 모듈
+│   │   ├── chroma_service.py        # 벡터 검색 관련 로직
+│   │   ├── gpt_service.py           # GPT-4o API 호출 관련
+│   │   └── perplexity_service.py    # Perplexity 호출 관련
+│   └── __init__.py
 │
-├── db/                              # ChromaDB 벡터 저장 디렉토리
-│   └── chroma.sqlite3
+├── db/                              # ChromaDB 데이터 저장 폴더
 │
-├── dataset_question.csv             # 크롤링된 면접 질문 데이터셋
-├── crolling_question.py             # JobKorea 면접 질문 크롤러
+├── .env                             # 환경 변수 파일 (.env)
+├── dataset_question.csv             # 크롤링을 통해 얻은 기업, 직무 별 면접 질문 데이터
 ├── main.py                          # FastAPI 앱 진입점
-├── .env                             # OpenAI / Perplexity API Key 설정 파일
-├── requirements.txt                 # 의존성 목록
-└── README.md
+├── README.md                        # 프로젝트 설명서
+└── requirements.txt                 # Python 의존성 명세
 ```
 
 ## 🚀 주요 API 기능
@@ -106,7 +102,7 @@ AI/
 | `POST /follow-up` | 후속 질문 생성: 사용자의 답변을 기반으로 심화 질문 제공 |
 | `POST /generate-qas` | RAG 기반 예상 면접 질문 생성 (Chroma + Perplexity + GPT 활용) |
 
-> ✅ **예시 요청 및 응답은 각 API 내부에 Swagger-style Docstring으로 포함되어 있습니다.**
+> **예시 요청 및 응답은 각 API 내부에 Swagger-style Docstring으로 포함되어 있습니다.**
 
 ## 🔧 사전 준비사항
 
@@ -144,9 +140,9 @@ venv\Scripts\activate         # Windows
 pip install -r requirements.txt
 ```
 
-### 3️⃣ .env 파일 작성
+### 3️⃣ `.env` 파일 작성
 
-루트 디렉토리에 .env 파일을 생성하고 다음 내용을 입력합니다:
+루트 디렉토리에 `.env` 파일을 생성하고 다음 내용을 입력합니다:
 
 ```ini
 CHROMEDRIVER_PATH=YOUR_CHROME_DRIVER_PATH
