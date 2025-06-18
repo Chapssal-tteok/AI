@@ -1,12 +1,20 @@
+# crolling_question.py
+
 import csv
 import os
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
+from dotenv import load_dotenv
 
-# WebDriver의 경로 설정 (크롬 드라이버의 위치 지정)
-driver_path = "C:\\Users\\Junghwa\\Downloads\\chromedriver-win64\\chromedriver-win64\\chromedriver.exe"
+# .env 불러오기
+load_dotenv()
+
+# .env에서 크롬 드라이버 경로 불러오기
+driver_path = os.getenv("CHROMEDRIVER_PATH")
+
+# WebDriver의 경로 설정
 service = Service(executable_path=driver_path)
 options = webdriver.ChromeOptions()
 driver = webdriver.Chrome(service=service, options=options)
